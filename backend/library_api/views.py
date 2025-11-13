@@ -1,10 +1,10 @@
 from rest_framework import viewsets
-from .models import User, Author, Book, Loan
-from .serializers import UserSerializer, AuthorSerializer, BookSerializer, LoanSerializer
+from .models import LibraryUser, Author, Book, Loan
+from .serializers import LibraryUserSerializer, AuthorSerializer, BookSerializer, LoanSerializer
 
 class UserViewSet(viewsets.ModelViewSet):
-    queryset = User.objects.all()
-    serializer_class = UserSerializer
+    queryset = LibraryUser.objects.all()
+    serializer_class = LibraryUserSerializer
 
 class AuthorViewSet(viewsets.ModelViewSet):
     queryset = Author.objects.all()
