@@ -1,7 +1,8 @@
 import React from 'react';
 import { deleteBook } from '../services/books';
 
-function BookList({ books, onDelete }) {
+function BookList({ books = [], onDelete, allowDelete = false }) {
+    
     const handleDelete = async (bookId) => {
         try {
             await deleteBook(bookId);
@@ -12,6 +13,7 @@ function BookList({ books, onDelete }) {
             console.error(error);
         }
     };
+
     return (
         <div>
             <h2>Books</h2>
@@ -19,7 +21,10 @@ function BookList({ books, onDelete }) {
                 {books.map(book => (
                     <li key={book.book_id || book.id}>
                         {book.title} - {book.status}
-                        <button onClick={() => handleDelete(book.book_id)}>Delete</button>
+                        
+                        {allowDelete && (
+                            <button onClick={() => handleDelete(book.book_id)}>Delete</button>
+                        )}
                     </li>
                 ))}
             </ul>  
