@@ -21,7 +21,7 @@ function AdminDashboard() {
         <div>
             <h1>Admin Dashboard</h1>
             <BookForm onBookAdded={fetchBooks} />
-            <BookList books={books} onDelete={fetchBooks} allowDelete={true} />
+            <BookList books={books} onUpdate={fetchBooks} allowDelete={true} />
             <LoanHistory />
         </div>  
     )

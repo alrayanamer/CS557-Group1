@@ -7,18 +7,20 @@ function LoanHistory({ userId }) {
     const fetchLoans = async () => {
         try {
             const response = await getLoans();
-            const userLoan = userId
-                ? response.data.filter(loan => loan.user_id === userId)
+            const userLoans = userId
+                ? response.data.filter(loan => loan.user_id == userId)
                 : response.data;
-            setLoans(userLoan);
+            setLoans(userLoans);
         } catch (error) {
-            alert('Error fetching loans');
-            console.error(error);
+            console.error('Error fetching loans', error);
         }
     };
-     const handleReturn = async (loanId) => {
+
+    const handleReturn = async (loanId) => {
         try {
-           await returnBook(loanId);
+            const today = new Date().toISOString().split('T')[0];
+            await returnBook(loanId, { return_date: today });
+            
             alert('Book returned');
             fetchLoans();
         } catch (error) {
@@ -26,16 +28,25 @@ function LoanHistory({ userId }) {
             console.error(error);
         }
     };
+
     useEffect(() => { fetchLoans(); }, [userId]);
+
     return (
         <div>
             <h2>Loan History</h2>
             <ul>
                 {loans.map(loan => (
-                    <li key={loan.loan_id || loan.id}>
-                        Book ID: {loan.book_id}, Status: {loan.status}, Borrowed: {loan.borrow_date}, Returned: {loan.return_date || 'Not Returned'}
+                    <li key={loan.loan_id || loan.id} style={{ marginBottom: '10px', borderBottom: '1px solid #ccc', paddingBottom: '10px' }}>
+                        <strong>Book:</strong> {loan.book ? loan.book.title : 'Unknown'} <br/>
+                        <strong>Status:</strong> {loan.book ? loan.book.status : 'N/A'} <br/>
+                        
+                        <strong>Borrowed:</strong> {loan.borrow_date} <br/>
+                        <strong>Returned:</strong> {loan.return_date || 'Not Returned'} <br/>
+
                         {!loan.return_date && (
-                        <button onClick={() => handleReturn(loan.loan_id)}>Return Book</button>
+                            <button onClick={() => handleReturn(loan.loan_id)} style={{ marginTop: '5px', color: 'blue' }}>
+                                Return Book
+                            </button>
                         )}
                     </li>
                 ))}
