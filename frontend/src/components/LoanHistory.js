@@ -8,8 +8,16 @@ function LoanHistory({ userId }) {
         try {
             const response = await getLoans();
             const userLoans = userId
-                ? response.data.filter(loan => loan.user_id == userId)
+                ? response.data.filter(loan => {
+                    console.log(`Comparing loan.user_id (${loan.user_id}) with userId (${userId})`);
+                        const loanUserId = loan.user?.user_id || loan.user?.id;
+                        console.log(`Comparing loan.user.user_id (${loanUserId}) with userId (${userId})`);
+                        return loanUserId == userId;
+                  })
                 : response.data;
+            console.log('User ID:', userId);
+            console.log('All loans:', response.data);
+            console.log('Filtered loans:', userLoans);
             setLoans(userLoans);
         } catch (error) {
             console.error('Error fetching loans', error);
@@ -36,7 +44,7 @@ function LoanHistory({ userId }) {
             <h2>Loan History</h2>
             <ul>
                 {loans.map(loan => (
-                    <li key={loan.loan_id || loan.id} style={{ marginBottom: '10px', borderBottom: '1px solid #ccc', paddingBottom: '10px' }}>
+                    <li key={loan.loan_id || loan.id}>
                         <strong>Book:</strong> {loan.book ? loan.book.title : 'Unknown'} <br/>
                         <strong>Status:</strong> {loan.book ? loan.book.status : 'N/A'} <br/>
                         

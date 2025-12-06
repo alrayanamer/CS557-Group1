@@ -9,6 +9,7 @@ function BookList({ books = [], onUpdate, allowDelete = false }) {
     const user = JSON.parse(localStorage.getItem('currentUser'));
     const [editingBook, setEditingBook] = useState(null);
     const [editFormData, setEditFormData] = useState({});
+    const [viewBookId, setViewBookId] = useState(null);
 
     const handleDelete = async (bookId) => {
         try {
@@ -19,6 +20,14 @@ function BookList({ books = [], onUpdate, allowDelete = false }) {
             alert('Error deleting book');
             console.error(error);
         }
+    };
+
+    const handleView = (bookId) => {
+        setViewBookId(bookId);
+    };
+
+    const handleCloseView = () => {
+        setViewBookId(null);
     };
 
     const handleEdit = (book) => {
@@ -76,43 +85,43 @@ function BookList({ books = [], onUpdate, allowDelete = false }) {
                 {books.map(book => (
                     <li key={book.book_id || book.id}>
                         {editingBook === book.book_id ? (
-                            <div style={{marginBottom: '10px', padding: '10px', border: '1px solid #ccc'}}>
+                            <div>
                                 <input 
                                     placeholder="Title" 
                                     value={editFormData.title} 
                                     onChange={(e) => setEditFormData({...editFormData, title: e.target.value})}
-                                    style={{marginRight: '5px'}}
+                                    
                                 /><br /><br />
                                 <input 
                                     placeholder="Author ID" 
                                     value={editFormData.author_id} 
                                     onChange={(e) => setEditFormData({...editFormData, author_id: e.target.value})}
-                                    style={{marginRight: '5px'}}
+                                    
                                 /><br /><br />
                                 <input 
                                     placeholder="Genre" 
                                     value={editFormData.genre} 
                                     onChange={(e) => setEditFormData({...editFormData, genre: e.target.value})}
-                                    style={{marginRight: '5px'}}
+                                    
                                 /><br /><br />
                                 <input 
                                     placeholder="Publication Year" 
                                     value={editFormData.publication_year} 
                                     onChange={(e) => setEditFormData({...editFormData, publication_year: e.target.value})}
-                                    style={{marginRight: '5px'}}
+                                    
                                 /><br /><br />
                                 <select 
                                     value={editFormData.status} 
                                     onChange={(e) => setEditFormData({...editFormData, status: e.target.value})}
-                                    style={{marginRight: '5px'}}
+                                    
                                 >
                                     <option value="available">Available</option>
                                     <option value="on_loan">On Loan</option>
                                 </select><br /><br />
-                                <button onClick={() => handleSaveEdit(book.book_id)} style={{marginRight: '5px', color: 'green'}}>
+                                <button onClick={() => handleSaveEdit(book.book_id)}>
                                     Save
                                 </button>
-                                <button onClick={handleCancelEdit} style={{color: 'gray'}}>
+                                <button onClick={handleCancelEdit}>
                                     Cancel
                                 </button>
                             </div>
@@ -122,18 +131,37 @@ function BookList({ books = [], onUpdate, allowDelete = false }) {
                                 
                                 {allowDelete && (
                                     <>
-                                        <button onClick={() => handleEdit(book)} style={{marginLeft: '10px', color: 'blue'}}>
+                                        <button onClick={() => handleEdit(book)}>
                                             Edit
                                         </button>
-                                        <button onClick={() => handleDelete(book.book_id)} style={{marginLeft: '5px', color: 'red'}}>
+                                        <button onClick={() => handleDelete(book.book_id)}>
                                             Delete
                                         </button>
                                     </>
                                 )}
-                                {!allowDelete && book.status === 'available' && (
-                                    <button onClick={() => handleBorrow(book.book_id)} style={{marginLeft: '10px', color: 'green'}}>
-                                        Borrow
-                                    </button>
+                                {!allowDelete && (
+                                    <>
+                                        <button onClick={() => handleView(book.book_id)}>
+                                            View
+                                        </button>
+                                        {book.status === 'available' && (
+                                            <button onClick={() => handleBorrow(book.book_id)}>
+                                                Borrow
+                                            </button>
+                                        )}
+                                    </>
+                                )}
+                                {viewBookId === book.book_id && (
+                                    <div>
+                                        <strong>{book.title}</strong><br />
+                                        <em>Author:</em> {book.author ? `${book.author.first_name} ${book.author.last_name}` : 'Unknown'}<br />
+                                        <em>Genre:</em> {book.genre || 'N/A'}<br />
+                                        <em>Publication Year:</em> {book.publication_year || 'N/A'}<br />
+                                        <em>Status:</em> {book.status || 'N/A'}<br />
+                                        <div>
+                                            <button onClick={handleCloseView}>Close</button>
+                                        </div>
+                                    </div>
                                 )}
                             </div>
                         )}
