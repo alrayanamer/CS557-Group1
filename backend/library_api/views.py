@@ -10,7 +10,6 @@ from .serializers import LibraryUserSerializer, AuthorSerializer, BookSerializer
 def login_view(request):
     email = request.data.get('email')
     password = request.data.get('password')
-    
     try:
         user = LibraryUser.objects.get(email=email, password=password)
         serializer = LibraryUserSerializer(user)
@@ -51,3 +50,16 @@ class LoanViewSet(viewsets.ModelViewSet):
     serializer_class = LoanSerializer
     authentication_classes = []
     permission_classes = []
+
+    def perform_create(self, serializer):
+        loan = serializer.save()
+        book = loan.book
+        book.status = 'on_loan'
+        book.save()
+
+    def perform_update(self, serializer):
+        loan = serializer.save()
+        if loan.return_date:
+            book = loan.book
+            book.status = 'available'
+            book.save()
