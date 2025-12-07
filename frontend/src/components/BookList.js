@@ -1,4 +1,5 @@
 import React, { useState } from 'react';
+import ReactDOM from 'react-dom';
 import { deleteBook, updateBook } from '../services/books';
 import { borrowBook } from '../services/loans'; // Import borrow service
 
@@ -10,6 +11,8 @@ function BookList({ books = [], onUpdate, allowDelete = false }) {
     const [editingBook, setEditingBook] = useState(null);
     const [editFormData, setEditFormData] = useState({});
     const [viewBookId, setViewBookId] = useState(null);
+    const [searchTerm, setSearchTerm] = useState('');
+    const [genreFilter, setGenreFilter] = useState('');
 
     const handleDelete = async (bookId) => {
         try {
@@ -78,11 +81,40 @@ function BookList({ books = [], onUpdate, allowDelete = false }) {
         }
     };
 
+    // Filter books based on search and genre
+    const filteredBooks = books.filter(book => {
+        const matchesSearch = book.title.toLowerCase().includes(searchTerm.toLowerCase());
+        const matchesGenre = genreFilter === '' || book.genre === genreFilter;
+        return matchesSearch && matchesGenre;
+    });
+
+    // Get unique genres for dropdown
+    const genres = [...new Set(books.map(book => book.genre).filter(Boolean))];
+
     return (
         <div className="book-list card">
             <h2>Books</h2>
+            <div style={{ marginBottom: '16px', display: 'flex', gap: '12px' }}>
+                <input
+                    type="text"
+                    placeholder="Search by title..."
+                    value={searchTerm}
+                    onChange={(e) => setSearchTerm(e.target.value)}
+                    style={{ flex: 1 }}
+                />
+                <select
+                    value={genreFilter}
+                    onChange={(e) => setGenreFilter(e.target.value)}
+                    style={{ width: '200px' }}
+                >
+                    <option value="">All Genres</option>
+                    {genres.map(genre => (
+                        <option key={genre} value={genre}>{genre}</option>
+                    ))}
+                </select>
+            </div>
             <ul className="list book-list-items">
-                {books.map(book => (
+                {filteredBooks.map(book => (
                     <li className="list-item" key={book.book_id || book.id}>
                         {editingBook === book.book_id ? (
                             <div>
@@ -154,27 +186,35 @@ function BookList({ books = [], onUpdate, allowDelete = false }) {
                                         </>
                                     )}
                                 </div>
-                                {viewBookId === book.book_id && (
-                                    <div className="modal-overlay" onClick={handleCloseView}>
-                                        <div className="modal-content" onClick={(e) => e.stopPropagation()}>
-                                            <div className="modal-header">
-                                                <h2>{book.title}</h2>
-                                                <button className="modal-close" onClick={handleCloseView}>&times;</button>
-                                            </div>
-                                            <div>
-                                                <div className="meta">Author: {book.author ? `${book.author.first_name} ${book.author.last_name}` : 'Unknown'}</div>
-                                                <div className="meta">Genre: {book.genre || 'N/A'}</div>
-                                                <div className="meta">Publication Year: {book.publication_year || 'N/A'}</div>
-                                                <div className="meta">Status: {book.status || 'N/A'}</div>
-                                            </div>
-                                        </div>
-                                    </div>
-                                )}
                             </>
                         )}
                     </li>
                 ))}
-            </ul>  
+            </ul>
+            {viewBookId && ReactDOM.createPortal(
+                <div className="modal-overlay" onClick={handleCloseView}>
+                    <div className="modal-content" onClick={(e) => e.stopPropagation()}>
+                        <div className="modal-header">
+                            <h2>{books.find(b => b.book_id === viewBookId)?.title}</h2>
+                            <button className="modal-close" onClick={handleCloseView}>&times;</button>
+                        </div>
+                        <div>
+                            {(() => {
+                                const book = books.find(b => b.book_id === viewBookId);
+                                return book ? (
+                                    <>
+                                        <div className="meta"><strong>Author:</strong> {book.author ? `${book.author.first_name} ${book.author.last_name}` : 'Unknown'}</div>
+                                        <div className="meta"><strong>Genre:</strong> {book.genre || 'N/A'}</div>
+                                        <div className="meta"><strong>Publication Year:</strong> {book.publication_year || 'N/A'}</div>
+                                        <div className="meta"><strong>Status:</strong> {book.status || 'N/A'}</div>
+                                    </>
+                                ) : null;
+                            })()}
+                        </div>
+                    </div>
+                </div>,
+                document.body
+            )}  
         </div>
     );
 }
