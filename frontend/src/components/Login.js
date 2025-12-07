@@ -21,9 +21,11 @@ function Login() {
         }
     };
     return (
-        <div>
-            <h2>Login</h2>
-            <form onSubmit={handleLogin}>
+        <div className="app-container">
+            <div className="app-header"><div className="brand"><h1>Library Login</h1></div></div>
+            <div className="card">
+            <h2 className="muted">Login</h2>
+            <form onSubmit={handleLogin} className="auth-form">
               <input
                 type="email"
                 placeholder="Email"
@@ -40,8 +42,9 @@ function Login() {
                 required
               />
               <br /><br />
-              <button type="submit">Login</button>
-            </form>  
+              <button className="btn-primary" type="submit">Login</button>
+            </form>
+            </div>
         </div>
     );
 }

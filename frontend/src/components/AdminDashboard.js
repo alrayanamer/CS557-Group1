@@ -18,12 +18,22 @@ function AdminDashboard() {
         };
     useEffect(() => {fetchBooks(); }, []);
     return (
-        <div>
-            <h1>Admin Dashboard</h1>
-            <BookForm onBookAdded={fetchBooks} />
-            <BookList books={books} onUpdate={fetchBooks} allowDelete={true} />
-            <LoanHistory />
-        </div>  
+        <div className="app-container">
+            <div className="app-header">
+                <div className="brand"><h1>Admin Dashboard</h1><div className="tag muted">Administrator</div></div>
+            </div>
+            <div className="dashboard-grid">
+                <div>
+                    <BookForm onBookAdded={fetchBooks} />
+                    <BookList books={books} onUpdate={fetchBooks} allowDelete={true} />
+                </div>
+                <div>
+                    <div className="card">
+                        <LoanHistory />
+                    </div>
+                </div>
+            </div>
+        </div>
     )
 }
 export default AdminDashboard;

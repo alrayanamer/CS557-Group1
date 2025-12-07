@@ -28,17 +28,19 @@ function BookForm({ onBookAdded }) {
             console.error(error);
         }
     };
-    return (
-        <div>
-           <h2>Add New Book</h2>
-            <form onSubmit={handleAdd}>
-              <input placeholder="Title" value={title} onChange={e => setTitle(e.target.value)} required /><br /><br />
-              <input placeholder="Author ID" value={authorId} onChange={e => setAuthorId(e.target.value)} required /><br /><br />
-              <input placeholder="Genre" value={genre} onChange={e => setGenre(e.target.value)} /><br /><br />
-              <input placeholder="Publication Year" value={publicationYear} onChange={e => setPublicationYear(e.target.value)} /><br /><br />
-              <button type="submit">Add Book</button>
-            </form>
-        </div>
-    );
+        return (
+                <div className="card book-form-section">
+                     <h2>Add New Book</h2>
+                        <form onSubmit={handleAdd}>
+                            <input placeholder="Title" value={title} onChange={e => setTitle(e.target.value)} required />
+                            <input placeholder="Author ID" value={authorId} onChange={e => setAuthorId(e.target.value)} required />
+                            <input placeholder="Genre" value={genre} onChange={e => setGenre(e.target.value)} />
+                            <input placeholder="Publication Year" value={publicationYear} onChange={e => setPublicationYear(e.target.value)} />
+                            <div style={{marginTop:10}}>
+                                <button className="btn-primary" type="submit">Add Book</button>
+                            </div>
+                        </form>
+                </div>
+        );
 }
 export default BookForm;

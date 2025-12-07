@@ -5,7 +5,17 @@ import { getBooks } from '../services/books';
 
 function UserDashboard() {
     const [books, setBooks] = useState([]);
-    const user = JSON.parse(localStorage.getItem('currentUser'));
+    const [userId, setUserId] = useState(null);
+
+    useEffect(() => {
+        const currentUserData = localStorage.getItem('currentUser');
+        if (currentUserData) {
+            const user = JSON.parse(currentUserData);
+            const id = user.user_id || user.id;
+            setUserId(id);
+            console.log('User ID from localStorage:', id);
+        }
+    }, []);
 
     const fetchBooks = async () => {
         try {
@@ -21,11 +31,18 @@ function UserDashboard() {
     }, []);
 
     return (
-        <div>
-            <h1>User Dashboard</h1>
-            <BookList books={books} onUpdate={fetchBooks} />
-            
-            <LoanHistory userId={user ? user.user_id : null} />
+        <div className="app-container">
+            <div className="app-header"><div className="brand"><h1>User Dashboard</h1></div></div>
+            <div className="dashboard-grid">
+                <div>
+                    <BookList books={books} onUpdate={fetchBooks} />
+                </div>
+                <div>
+                    <div className="card">
+                        <LoanHistory userId={userId} />
+                    </div>
+                </div>
+            </div>
         </div>  
     )
 }

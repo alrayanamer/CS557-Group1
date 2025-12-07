@@ -1,18 +1,27 @@
 import React, { useState, useEffect } from 'react';
 import { getLoans, returnBook } from '../services/loans';
 
-function LoanHistory({ userId }) {
+const LoanHistory = ({ userId }) => {
     const [loans, setLoans] = useState([]);
 
     const fetchLoans = async () => {
         try {
-            const response = await getLoans();
-            const userLoans = userId
-                ? response.data.filter(loan => loan.user_id == userId)
-                : response.data;
-            setLoans(userLoans);
+            const response = await getLoans(userId);
+            const loansList = Array.isArray(response) ? response : (response.data || []);
+            
+            const sortedLoans = loansList.filter(loan => {
+                const loanUserId = loan.user?.user_id || loan.user?.id;
+                return userId ? loanUserId == userId : true;
+            }).sort((a, b) => {
+                const aActivity = a.return_date ? Date.parse(a.return_date) : Date.parse(a.borrow_date);
+                const bActivity = b.return_date ? Date.parse(b.return_date) : Date.parse(b.borrow_date);
+                return (bActivity || 0) - (aActivity || 0);
+            });
+            
+            setLoans(sortedLoans);
         } catch (error) {
-            console.error('Error fetching loans', error);
+            console.error('Error fetching loans:', error);
+            setLoans([]);
         }
     };
 
@@ -32,26 +41,25 @@ function LoanHistory({ userId }) {
     useEffect(() => { fetchLoans(); }, [userId]);
 
     return (
-        <div>
+        <div className="loan-history card">
             <h2>Loan History</h2>
-            <ul>
-                {loans.map(loan => (
-                    <li key={loan.loan_id || loan.id} style={{ marginBottom: '10px', borderBottom: '1px solid #ccc', paddingBottom: '10px' }}>
-                        <strong>Book:</strong> {loan.book ? loan.book.title : 'Unknown'} <br/>
-                        <strong>Status:</strong> {loan.book ? loan.book.status : 'N/A'} <br/>
-                        
-                        <strong>Borrowed:</strong> {loan.borrow_date} <br/>
-                        <strong>Returned:</strong> {loan.return_date || 'Not Returned'} <br/>
-
-                        {!loan.return_date && (
-                            <button onClick={() => handleReturn(loan.loan_id)} style={{ marginTop: '5px', color: 'blue' }}>
-                                Return Book
-                            </button>
-                        )}
+            <ul className="list loan-history-list">
+                {Array.isArray(loans) && loans.map(loan => (
+                    <li className="list-item" key={loan.loan_id || loan.id}>
+                        <div>
+                            <div><strong>{loan.book ? loan.book.title : 'Unknown'}</strong></div>
+                            <div className="meta">Borrowed: {loan.borrow_date} • Returned: {loan.return_date || 'Not Returned'}</div>
+                        </div>
+                        <div className="book-actions">
+                            {!loan.return_date && (
+                                <button className="btn-primary" onClick={() => handleReturn(loan.loan_id)}>Return</button>
+                            )}
+                        </div>
                     </li>
                 ))}
-            </ul>  
+            </ul>
         </div>
     );
-}
+};
+
 export default LoanHistory;

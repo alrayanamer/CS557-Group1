@@ -18,11 +18,12 @@ function Register() {
         }
     };
     return (
-        <div>
-            <h2>Register</h2>
-            <form onSubmit={handleRegister}>
-              <input placeholder="First Name" value={firstName} onChange={e => setFirstName(e.target.value)} required /><br /><br />
-              <input placeholder="Last Name" value={lastName} onChange={e => setLastName(e.target.value)} required /><br /><br />
+        <div className="app-container">
+            <div className="app-header"><div className="brand"><h1>Create an Account</h1></div></div>
+            <div className="card">
+            <form onSubmit={handleRegister} className="auth-form">
+              <input placeholder="First Name" value={firstName} onChange={e => setFirstName(e.target.value)} required />
+              <input placeholder="Last Name" value={lastName} onChange={e => setLastName(e.target.value)} required />
               <input
                 type="email"
                 placeholder="Email"
@@ -30,7 +31,6 @@ function Register() {
                 onChange={(e) => setEmail(e.target.value)}
                 required
               />
-              <br /><br />
               <input
                 type="password"
                 placeholder="Password"
@@ -38,9 +38,11 @@ function Register() {
                 onChange={(e) => setPassword(e.target.value)}
                 required
               />
-              <br /><br />
-              <button type="submit">Register</button>
-            </form>  
+              <div style={{marginTop:10}}>
+                <button className="btn-primary" type="submit">Register</button>
+              </div>
+            </form>
+            </div>
         </div>
     );
 }
