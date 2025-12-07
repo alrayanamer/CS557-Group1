@@ -79,11 +79,11 @@ function BookList({ books = [], onUpdate, allowDelete = false }) {
     };
 
     return (
-        <div>
+        <div className="book-list card">
             <h2>Books</h2>
-            <ul>
+            <ul className="list book-list-items">
                 {books.map(book => (
-                    <li key={book.book_id || book.id}>
+                    <li className="list-item" key={book.book_id || book.id}>
                         {editingBook === book.book_id ? (
                             <div>
                                 <input 
@@ -126,44 +126,51 @@ function BookList({ books = [], onUpdate, allowDelete = false }) {
                                 </button>
                             </div>
                         ) : (
-                            <div>
-                                {book.title} - <strong>{book.status}</strong>
-                                
-                                {allowDelete && (
-                                    <>
-                                        <button onClick={() => handleEdit(book)}>
-                                            Edit
-                                        </button>
-                                        <button onClick={() => handleDelete(book.book_id)}>
-                                            Delete
-                                        </button>
-                                    </>
-                                )}
-                                {!allowDelete && (
-                                    <>
-                                        <button onClick={() => handleView(book.book_id)}>
-                                            View
-                                        </button>
-                                        {book.status === 'available' && (
-                                            <button onClick={() => handleBorrow(book.book_id)}>
-                                                Borrow
+                            <>
+                                <div className="book-info">
+                                    <div><strong>{book.title}</strong> <span className="muted">- {book.status}</span></div>
+                                </div>
+                                <div className="book-actions">
+                                    {allowDelete && (
+                                        <>
+                                            <button className="btn-secondary" onClick={() => handleEdit(book)}>
+                                                Edit
                                             </button>
-                                        )}
-                                    </>
-                                )}
+                                            <button className="btn-danger" onClick={() => handleDelete(book.book_id)}>
+                                                Delete
+                                            </button>
+                                        </>
+                                    )}
+                                    {!allowDelete && (
+                                        <>
+                                            <button className="btn-ghost" onClick={() => handleView(book.book_id)}>
+                                                View
+                                            </button>
+                                            {book.status === 'available' && (
+                                                <button className="btn-primary" onClick={() => handleBorrow(book.book_id)}>
+                                                    Borrow
+                                                </button>
+                                            )}
+                                        </>
+                                    )}
+                                </div>
                                 {viewBookId === book.book_id && (
-                                    <div>
-                                        <strong>{book.title}</strong><br />
-                                        <em>Author:</em> {book.author ? `${book.author.first_name} ${book.author.last_name}` : 'Unknown'}<br />
-                                        <em>Genre:</em> {book.genre || 'N/A'}<br />
-                                        <em>Publication Year:</em> {book.publication_year || 'N/A'}<br />
-                                        <em>Status:</em> {book.status || 'N/A'}<br />
-                                        <div>
-                                            <button onClick={handleCloseView}>Close</button>
+                                    <div className="modal-overlay" onClick={handleCloseView}>
+                                        <div className="modal-content" onClick={(e) => e.stopPropagation()}>
+                                            <div className="modal-header">
+                                                <h2>{book.title}</h2>
+                                                <button className="modal-close" onClick={handleCloseView}>&times;</button>
+                                            </div>
+                                            <div>
+                                                <div className="meta">Author: {book.author ? `${book.author.first_name} ${book.author.last_name}` : 'Unknown'}</div>
+                                                <div className="meta">Genre: {book.genre || 'N/A'}</div>
+                                                <div className="meta">Publication Year: {book.publication_year || 'N/A'}</div>
+                                                <div className="meta">Status: {book.status || 'N/A'}</div>
+                                            </div>
                                         </div>
                                     </div>
                                 )}
-                            </div>
+                            </>
                         )}
                     </li>
                 ))}

@@ -31,11 +31,18 @@ function UserDashboard() {
     }, []);
 
     return (
-        <div>
-            <h1>User Dashboard</h1>
-            <BookList books={books} onUpdate={fetchBooks} />
-            
-            <LoanHistory userId={userId} />
+        <div className="app-container">
+            <div className="app-header"><div className="brand"><h1>User Dashboard</h1></div></div>
+            <div className="dashboard-grid">
+                <div>
+                    <BookList books={books} onUpdate={fetchBooks} />
+                </div>
+                <div>
+                    <div className="card">
+                        <LoanHistory userId={userId} />
+                    </div>
+                </div>
+            </div>
         </div>  
     )
 }
