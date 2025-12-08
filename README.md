@@ -1,72 +1,117 @@
-# CS557-Group1
+# Library Management System
 
-Admin Info:
-Username: admin
-Email address: admin@uwm.edu
-password: admin123
 
-Clone the Repository
-----------------------------------
-git clone https://github.com/<your-username>/library-management-system.git
-cd library-management-system
+## Prerequisites
 
-Open in VS Code
-----------------------------------
-- Open Visual Studio Code
-- Go to File → Open Folder...
-- Select the project root folder (library-management-system/)
+Before you begin, ensure you have the following installed:
+- **Python 3.8+** - [Download here](https://www.python.org/downloads/)
+- **Node.js 16+** and npm - [Download here](https://nodejs.org/)
+- **Git** - [Download here](https://git-scm.com/downloads)
 
- Backend Setup (Django)
-----------------------------------
+Verify installations:
+```bash
+python --version
+node --version
+npm --version
+```
 
-Install Backend Dependencies
-----------------------------------
+## Installation
+
+### 1. Clone the Repository
+```bash
+git clone https://github.com/alrayanamer/CS557-Group1.git
+cd CS557-Group1
+```
+
+### 2. Backend Setup (Django)
+
+Navigate to the backend directory:
+```bash
+cd backend
+```
+
+Install required Python packages:
+```bash
 pip install django djangorestframework django-cors-headers
+```
 
-Run Initial Migrations
-----------------------------------
+Run database migrations:
+```bash
 python manage.py makemigrations
 python manage.py migrate
+```
 
-This creates your default SQLite database (db.sqlite3).
+### 3. Frontend Setup (React)
 
-(You can add MySQL later with:)
-pip install mysqlclient
-
-Run the Django Server
-----------------------------------
-python manage.py runserver
-
-Visit the backend API in your browser:
-http://127.0.0.1:8000/api/
-
-Frontend Setup (React)
-----------------------------------
-
-Install Node.js (if not installed)
-----------------------------------
-Download from: https://nodejs.org/
-Then verify:
-node -v
-npm -v
-
-Install React Dependencies
-----------------------------------
+Navigate to the frontend directory:
+```bash
 cd ../frontend
+```
+
+Install required npm packages:
+```bash
 npm install
+```
 
-Run the React App
-----------------------------------
+This installs all dependencies in `package.json`
+
+## Running the Application
+
+You need to run both backend and frontend servers simultaneously.
+
+### Use Two Terminal Windows
+
+**Terminal 1 - Backend:**
+```bash
+cd backend
+python manage.py runserver
+```
+Backend will run at: `http://127.0.0.1:8000`
+
+**Terminal 2 - Frontend:**
+```bash
+cd frontend
 npm start
+```
+Frontend will run at: `http://localhost:3000`
 
-The frontend runs on:
-http://localhost:3000
+## 📁 Project Structure
 
-----------------------------------
-Make sure:
-- Django runs on port 8000
-- React runs on port 3000
-- CORS is enabled in settings.py:
-  CORS_ALLOWED_ORIGINS = [
-      "http://localhost:3000",
-  ]
+```
+CS557-Group1/
+├── backend/
+│   ├── manage.py
+│   ├── db.sqlite3
+│   ├── library_api/           # Main API app
+│   │   ├── models.py          # Database models
+│   │   ├── serializers.py     # API serializers
+│   │   ├── views.py           # API endpoints
+│   │   └── urls.py            # API routes
+│   └── library_management/    # Django project settings
+│       ├── settings.py        # Project configuration
+│       └── urls.py            # Root URL configuration
+│
+├── frontend/
+│   ├── package.json
+│   ├── public/
+│   │   └── index.html
+│   └── src/
+│       ├── App.js             # Main app component
+│       ├── App.css            # Global styles
+│       ├── components/        # React components
+│       │   ├── Login.js
+│       │   ├── Register.js
+│       │   ├── AdminDashboard.js
+│       │   ├── UserDashboard.js
+│       │   ├── BookList.js
+│       │   ├── BookForm.js
+│       │   └── LoanHistory.js
+│       └── services/          # API service functions
+│           ├── api.js
+│           ├── auth.js
+│           ├── books.js
+│           ├── loans.js
+│           └── users.js
+│
+└── README.md
+```
